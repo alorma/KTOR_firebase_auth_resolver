@@ -1,0 +1,8 @@
+/.gradle
+/.idea
+/out
+/build
+*.iml
+*.ipr
+*.iws
+resources/app_service_account.json
