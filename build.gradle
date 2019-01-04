@@ -72,7 +72,7 @@ bintray {
     configurations = ['archives']
     pkg {
         repo = 'maven'
-        name = 'ktor_firebase_auth'
+        name = 'Ktor-Firebase-Auth'
         userOrg = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
         licenses = ['Apache-2.0']
         vcsUrl = 'https://github.com/alorma/KTOR_firebase_auth.git'
@@ -84,8 +84,8 @@ bintray {
 install {
     repositories.mavenInstaller {
         pom.project {
-            name 'Ktor Firebase Auth'
-            description 'KTOR Firebaser authentication plugin'
+            name 'Ktor-Firebase-Auth'
+            description 'KTOR Firebase authentication plugin'
             url 'https://github.com/alorma/KTOR_firebase_auth'
             inceptionYear '2019'
 
