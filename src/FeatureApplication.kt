@@ -1,3 +1,4 @@
+/*
 package com.alorma.ktor.firebase
 
 import io.ktor.application.Application
@@ -32,3 +33,4 @@ fun Application.main(testing: Boolean = false) {
         }
     }
 }
+*/
