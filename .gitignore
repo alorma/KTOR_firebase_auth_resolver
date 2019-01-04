@@ -6,3 +6,4 @@
 *.ipr
 *.iws
 resources/app_service_account.json
+secret.properties
