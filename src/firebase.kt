@@ -2,6 +2,7 @@ package com.alorma.ktor.firebase
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.UserRecord
 import io.ktor.application.call
 import io.ktor.auth.*
 import io.ktor.http.auth.HttpAuthHeader
@@ -15,7 +16,7 @@ fun Authentication.Configuration.firebase() {
         val credentials = call.request.bearerAuthenticationCredentials()
         val principal = credentials?.let {
             val user = FirebaseAuth.getInstance().getUserAsync(it.uId).get()
-            FirebasePrincipal(user.uid, user.displayName)
+            FirebasePrincipal(user.uid, user.displayName, user)
         }
 
         val cause = when {
@@ -67,4 +68,4 @@ fun ApplicationRequest.bearerAuthenticationCredentials(): FirebaseCredential? {
 private val basicAuthenticationChallengeKey: Any = "BearerAuth"
 
 data class FirebaseCredential(val uId: String) : Credential
-data class FirebasePrincipal(val uId: String, val name: String?) : Principal
+data class FirebasePrincipal(val uId: String, val name: String?, val firebaseUser: UserRecord) : Principal
