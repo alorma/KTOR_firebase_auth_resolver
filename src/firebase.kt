@@ -5,7 +5,6 @@ import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.UserRecord
 import io.ktor.application.call
 import io.ktor.auth.*
-import io.ktor.http.HttpStatusCode
 import io.ktor.http.auth.HttpAuthHeader
 import io.ktor.request.ApplicationRequest
 import io.ktor.response.respond
@@ -28,22 +27,27 @@ fun Authentication.Configuration.firebase() {
             }
 
             if (cause != null) {
-                context.challenge(basicAuthenticationChallengeKey, cause) {
-                    call.respond(UnauthorizedResponse(HttpAuthHeader.basicAuthChallenge("Firebase", null)))
-                    it.complete()
-                }
+                authError(context, cause)
             }
             if (principal != null) {
                 context.principal(principal)
             } else {
-                context.call.respond(HttpStatusCode.Unauthorized)
+                authError(context, AuthenticationFailedCause.NoCredentials)
+
             }
         } catch (e: Exception) {
-            context.call.respond(HttpStatusCode.Unauthorized)
+            authError(context, AuthenticationFailedCause.NoCredentials)
         }
     }
 
     register(provider)
+}
+
+private fun authError(context: AuthenticationContext, cause: AuthenticationFailedCause) {
+    context.challenge(basicAuthenticationChallengeKey, cause) {
+        call.respond(UnauthorizedResponse(HttpAuthHeader.basicAuthChallenge("Firebase", null)))
+        it.complete()
+    }
 }
 
 class FirebaseAuthenticationProvider : AuthenticationProvider(null)
