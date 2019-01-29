@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.UserRecord
 import io.ktor.application.call
 import io.ktor.auth.*
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.auth.HttpAuthHeader
 import io.ktor.request.ApplicationRequest
 import io.ktor.response.respond
@@ -13,26 +14,32 @@ fun Authentication.Configuration.firebase() {
     val provider = FirebaseAuthenticationProvider()
 
     provider.pipeline.intercept(AuthenticationPipeline.RequestAuthentication) { context ->
-        val credentials = call.request.bearerAuthenticationCredentials()
-        val principal = credentials?.let {
-            val user = FirebaseAuth.getInstance().getUserAsync(it.uId).get()
-            FirebasePrincipal(user.uid, user.displayName, user)
-        }
-
-        val cause = when {
-            credentials == null -> AuthenticationFailedCause.NoCredentials
-            principal == null -> AuthenticationFailedCause.InvalidCredentials
-            else -> null
-        }
-
-        if (cause != null) {
-            context.challenge(basicAuthenticationChallengeKey, cause) {
-                call.respond(UnauthorizedResponse(HttpAuthHeader.basicAuthChallenge("Firebase", null)))
-                it.complete()
+        try {
+            val credentials = call.request.bearerAuthenticationCredentials()
+            val principal = credentials?.let {
+                val user = FirebaseAuth.getInstance().getUserAsync(it.uId).get()
+                FirebasePrincipal(user.uid, user.displayName, user)
             }
-        }
-        if (principal != null) {
-            context.principal(principal)
+
+            val cause = when {
+                credentials == null -> AuthenticationFailedCause.NoCredentials
+                principal == null -> AuthenticationFailedCause.InvalidCredentials
+                else -> null
+            }
+
+            if (cause != null) {
+                context.challenge(basicAuthenticationChallengeKey, cause) {
+                    call.respond(UnauthorizedResponse(HttpAuthHeader.basicAuthChallenge("Firebase", null)))
+                    it.complete()
+                }
+            }
+            if (principal != null) {
+                context.principal(principal)
+            } else {
+                context.call.respond(HttpStatusCode.Unauthorized)
+            }
+        } catch (e: Exception) {
+            context.call.respond(HttpStatusCode.Unauthorized)
         }
     }
 

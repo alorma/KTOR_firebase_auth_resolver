@@ -16,7 +16,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'kotlin'
 
 group 'com.alorma.ktor'
-version '0.0.2'
+version '0.0.3'
 
 sourceSets {
     main.kotlin.srcDirs = main.java.srcDirs = ['src']
@@ -61,7 +61,7 @@ publishing {
             from components.java
             groupId 'com.alorma.ktor'
             artifactId 'firebase'
-            version '0.0.2'
+            version '0.0.3'
         }
     }
 }
@@ -92,7 +92,7 @@ install {
             packaging 'jar'
             groupId 'com.alorma.ktor'
             artifactId 'firebase_auth'
-            version '0.0.2'
+            version '0.0.3'
 
             licenses {
                 license {
