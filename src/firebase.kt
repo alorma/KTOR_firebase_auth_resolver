@@ -79,4 +79,6 @@ fun ApplicationRequest.bearerAuthenticationCredentials(): FirebaseCredential? {
 private val basicAuthenticationChallengeKey: Any = "BearerAuth"
 
 data class FirebaseCredential(val uId: String) : Credential
-data class FirebasePrincipal(val uId: String, val name: String?, val firebaseUser: UserRecord) : Principal
+data class FirebasePrincipal(val uId: String,
+                             val name: String?,
+                             val firebaseUser: UserRecord? = null) : Principal
