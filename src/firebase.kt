@@ -7,7 +7,6 @@ import io.ktor.application.call
 import io.ktor.auth.*
 import io.ktor.http.auth.HttpAuthHeader
 import io.ktor.request.ApplicationRequest
-import io.ktor.response.respond
 
 fun Authentication.Configuration.firebase() {
     val provider = FirebaseAuthenticationProvider()
@@ -27,27 +26,24 @@ fun Authentication.Configuration.firebase() {
             }
 
             if (cause != null) {
-                authError(context, cause)
+                authError()
             }
             if (principal != null) {
                 context.principal(principal)
             } else {
-                authError(context, AuthenticationFailedCause.NoCredentials)
+                authError()
 
             }
         } catch (e: Exception) {
-            authError(context, AuthenticationFailedCause.NoCredentials)
+            authError()
         }
     }
 
     register(provider)
 }
 
-private fun authError(context: AuthenticationContext, cause: AuthenticationFailedCause) {
-    context.challenge(basicAuthenticationChallengeKey, cause) {
-        call.respond(UnauthorizedResponse(HttpAuthHeader.basicAuthChallenge("Firebase", null)))
-        it.complete()
-    }
+private fun authError() {
+    throw FirebaseAuthenticationException()
 }
 
 class FirebaseAuthenticationProvider : AuthenticationProvider(null)
@@ -69,7 +65,7 @@ fun ApplicationRequest.bearerAuthenticationCredentials(): FirebaseCredential? {
                 val uId = verifyIdToken.uid
                 FirebaseCredential(uId)
             } catch (e: FirebaseAuthException) {
-                null
+                throw FirebaseAuthenticationException()
             }
         }
         else -> return null
