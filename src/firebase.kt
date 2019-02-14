@@ -7,6 +7,7 @@ import io.ktor.application.call
 import io.ktor.auth.*
 import io.ktor.http.auth.HttpAuthHeader
 import io.ktor.request.ApplicationRequest
+import java.util.concurrent.TimeUnit
 
 fun Authentication.Configuration.firebase() {
     val provider = FirebaseAuthenticationProvider()
@@ -48,10 +49,15 @@ private fun authError() {
 
 class FirebaseAuthenticationProvider : AuthenticationProvider(null)
 
+val authUserCredential: MutableMap<String, TimedCredential> = mutableMapOf()
+
 /**
  * Retrieves Bearer authentication credentials for this [ApplicationRequest]
  */
 fun ApplicationRequest.bearerAuthenticationCredentials(): FirebaseCredential? {
+    val nowProvider = SystemTimeProvider()
+    val expirationProvider = ExpirationTimeProvider(nowProvider, 5, TimeUnit.MINUTES)
+
     val parsed = parseAuthorizationHeader()
     when (parsed) {
         is HttpAuthHeader.Single -> {
@@ -60,10 +66,22 @@ fun ApplicationRequest.bearerAuthenticationCredentials(): FirebaseCredential? {
             if (!parsed.authScheme.equals("Bearer", ignoreCase = true)) {
                 return null
             }
-            return try {
-                val verifyIdToken = FirebaseAuth.getInstance().verifyIdToken(parsed.blob)
+
+            val bearerToken = parsed.blob
+
+            return authUserCredential[bearerToken]?.takeIf {
+                it.expireDate < nowProvider.now()
+            }?.credential ?: try {
+                val verifyIdToken = FirebaseAuth.getInstance().verifyIdToken(bearerToken)
                 val uId = verifyIdToken.uid
-                FirebaseCredential(uId)
+                val firebaseCredential = FirebaseCredential(uId)
+                    .also { credential: FirebaseCredential ->
+                        authUserCredential[bearerToken] = TimedCredential(
+                            credential,
+                            expirationProvider.now()
+                        )
+                    }
+                firebaseCredential
             } catch (e: FirebaseAuthException) {
                 throw FirebaseAuthenticationException()
             }
@@ -72,9 +90,16 @@ fun ApplicationRequest.bearerAuthenticationCredentials(): FirebaseCredential? {
     }
 }
 
+class TimedCredential(val credential: FirebaseCredential, val expireDate: Long)
+
 private val basicAuthenticationChallengeKey: Any = "BearerAuth"
 
-data class FirebaseCredential(val uId: String) : Credential
-data class FirebasePrincipal(val uId: String,
-                             val name: String?,
-                             val firebaseUser: UserRecord? = null) : Principal
+data class FirebaseCredential(
+    val uId: String
+) : Credential
+
+data class FirebasePrincipal(
+    val uId: String,
+    val name: String?,
+    val firebaseUser: UserRecord? = null
+) : Principal
