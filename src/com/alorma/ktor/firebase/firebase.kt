@@ -9,7 +9,7 @@ import io.ktor.auth.Principal
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
-import io.ktor.util.flattenForEach
+import io.ktor.request.header
 import java.net.URL
 
 fun Authentication.Configuration.firebaseAuth(
@@ -22,8 +22,9 @@ fun Authentication.Configuration.firebaseAuth(
         val authUrl = URL(auth.plus("authenticate"))
         val response = httpClient.get<String>(authUrl) {
             headers {
-                call.request.headers.flattenForEach { key, value ->
-                    set(key, value)
+                val name = "Authorization"
+                call.request.header(name)?.let { value ->
+                    set(name, value)
                 }
             }
         }
