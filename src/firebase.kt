@@ -11,7 +11,7 @@ import io.ktor.request.ApplicationRequest
 import io.ktor.util.pipeline.PipelineContext
 import java.util.concurrent.TimeUnit
 
-val authUserPrincipals: MutableMap<String, TimedCredential> = mutableMapOf()
+internal val authUserPrincipals: MutableMap<String, TimedCredential> = mutableMapOf()
 
 fun Authentication.Configuration.firebase() {
     val provider = FirebaseAuthenticationProvider()
