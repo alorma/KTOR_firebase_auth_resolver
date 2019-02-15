@@ -1,5 +1,6 @@
 package com.alorma.ktor.firebase
 
+import com.alorma.ktor.firebase.model.AuthResponse
 import io.ktor.application.call
 import io.ktor.auth.Authentication
 import io.ktor.auth.AuthenticationPipeline
@@ -20,7 +21,7 @@ fun Authentication.Configuration.firebase(
     ) { context ->
         val authUrl = EndpointDataSource(call.application).getAuthUrl()
 
-        val response = httpClient.get<String> {
+        val response = httpClient.get<AuthResponse> {
             url(URL(authUrl))
             headers {
                 call.request.headers.flattenForEach { key, value ->
@@ -29,8 +30,12 @@ fun Authentication.Configuration.firebase(
             }
         }
 
-        context.principal(AuthPrincipal(response))
+        val authPrincipal = AuthPrincipal(response.uId, response)
+        context.principal(authPrincipal)
     }
 }
 
-class AuthPrincipal(val text: String) : Principal
+class AuthPrincipal(
+    val uId: String,
+    val authResponse: AuthResponse
+) : Principal
