@@ -87,7 +87,7 @@ install {
         pom.project {
             name 'Ktor-Firebase-Auth-Resolver'
             description 'KTOR Firebase authentication plugin'
-            url 'https://github.com/alorma/KTOR_firebase_auth'
+            url 'https://github.com/alorma/KTOR_firebase_auth_resolver'
             inceptionYear '2019'
 
             packaging 'jar'
