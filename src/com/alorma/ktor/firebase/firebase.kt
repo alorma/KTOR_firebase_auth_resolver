@@ -13,13 +13,12 @@ import io.ktor.util.flattenForEach
 import java.net.URL
 
 fun Authentication.Configuration.firebase(
-    httpClient: HttpClient
+    httpClient: HttpClient,
+    authUrl: String
 ) {
     AuthenticationProvider(null).pipeline.intercept(
         AuthenticationPipeline.RequestAuthentication
     ) { context ->
-        val authUrl = EndpointDataSource(call.application).getAuthUrl()
-
         val response = httpClient.get<AuthResponse> {
             url(URL(authUrl))
             headers {
