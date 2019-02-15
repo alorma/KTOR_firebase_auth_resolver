@@ -16,9 +16,9 @@ fun Authentication.Configuration.firebase(
     httpClient: HttpClient,
     authUrl: String
 ) {
-    AuthenticationProvider(null).pipeline.intercept(
-        AuthenticationPipeline.RequestAuthentication
-    ) { context ->
+    val provider = AuthenticationProvider(null)
+
+    provider.pipeline.intercept(AuthenticationPipeline.RequestAuthentication) { context ->
         val response = httpClient.get<AuthResponse> {
             url(URL(authUrl))
             headers {
@@ -38,6 +38,8 @@ fun Authentication.Configuration.firebase(
         )
         context.principal(authPrincipal)
     }
+
+    register(provider )
 }
 
 data class AuthPrincipal(
