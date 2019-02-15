@@ -25,7 +25,9 @@ fun Authentication.Configuration.firebase() {
         when (parsed) {
             is HttpAuthHeader.Single -> {
                 val credential = authUserPrincipals[parsed.blob]?.takeIf {
-                    it.expireDate < nowProvider.now()
+                    it.expireDate < nowProvider.now() || it.usedTimes < Const.MAX_PRINCIPAL_TIMES
+                }?.also {
+                    it.usedTimes++
                 }
 
                 if (credential != null) {
@@ -121,3 +123,7 @@ data class FirebasePrincipal(
     val name: String?,
     val firebaseUser: UserRecord? = null
 ) : Principal
+
+object Const {
+    internal const val MAX_PRINCIPAL_TIMES = 10
+}
