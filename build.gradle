@@ -36,15 +36,14 @@ dependencies {
     compile "io.ktor:ktor-server-netty:$ktor_version"
     compile "io.ktor:ktor-auth:$ktor_version"
     compile "ch.qos.logback:logback-classic:$logback_version"
-    
+
     compile "io.ktor:ktor-client-apache:$ktor_version"
-    compile "com.google.firebase:firebase-admin:$firebase_version"
 
     testCompile "io.ktor:ktor-server-tests:$ktor_version"
 }
 
 shadowJar {
-    baseName = 'firebase_auth'
+    baseName = 'firebase_auth_resolver'
     classifier = null
     version = null
 }
@@ -74,7 +73,7 @@ bintray {
     configurations = ['archives']
     pkg {
         repo = 'maven'
-        name = 'Ktor-Firebase-Auth'
+        name = 'Ktor-Firebase-Auth-Resolver'
         userOrg = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
         licenses = ['Apache-2.0']
         vcsUrl = 'https://github.com/alorma/KTOR_firebase_auth.git'
