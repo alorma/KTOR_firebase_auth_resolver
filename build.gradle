@@ -16,7 +16,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'kotlin'
 
 group 'com.alorma.ktor'
-version '0.0.7'
+version '0.0.8'
 
 sourceSets {
     main.kotlin.srcDirs = main.java.srcDirs = ['src']
@@ -35,6 +35,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile "io.ktor:ktor-server-netty:$ktor_version"
     compile "io.ktor:ktor-auth:$ktor_version"
+    compile "io.ktor:ktor-gson:$ktor_version"
     compile "ch.qos.logback:logback-classic:$logback_version"
 
     compile "io.ktor:ktor-client-apache:$ktor_version"
@@ -62,7 +63,7 @@ publishing {
             from components.java
             groupId 'com.alorma.ktor'
             artifactId 'firebase_resolver'
-            version '0.0.7'
+            version '0.0.8'
         }
     }
 }
@@ -93,7 +94,7 @@ install {
             packaging 'jar'
             groupId 'com.alorma.ktor'
             artifactId 'firebase_auth_resolver'
-            version '0.0.7'
+            version '0.0.8'
 
             licenses {
                 license {
