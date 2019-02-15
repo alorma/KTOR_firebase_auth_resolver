@@ -33,6 +33,7 @@ fun Authentication.Configuration.firebase() {
                 if (credential != null) {
                     context.principal(credential.principal)
                 } else {
+                    authUserPrincipals.remove(parsed.blob)
                     authenticateUser(context, expirationProvider, parsed.blob)
                 }
             }
