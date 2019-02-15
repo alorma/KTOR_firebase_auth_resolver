@@ -16,7 +16,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'kotlin'
 
 group 'com.alorma.ktor'
-version '0.0.9'
+version '0.0.1'
 
 sourceSets {
     main.kotlin.srcDirs = main.java.srcDirs = ['src']
@@ -28,7 +28,7 @@ sourceSets {
 repositories {
     jcenter()
     maven { url "https://kotlin.bintray.com/ktor" }
-    
+
 }
 
 dependencies {
@@ -37,7 +37,7 @@ dependencies {
     compile "io.ktor:ktor-auth:$ktor_version"
     compile "ch.qos.logback:logback-classic:$logback_version"
     
-
+    compile "io.ktor:ktor-client-apache:$ktor_version"
     compile "com.google.firebase:firebase-admin:$firebase_version"
 
     testCompile "io.ktor:ktor-server-tests:$ktor_version"
@@ -62,8 +62,8 @@ publishing {
         LibPublication(MavenPublication) {
             from components.java
             groupId 'com.alorma.ktor'
-            artifactId 'firebase'
-            version '0.0.9'
+            artifactId 'firebase_resolver'
+            version '0.0.1'
         }
     }
 }
@@ -86,15 +86,15 @@ bintray {
 install {
     repositories.mavenInstaller {
         pom.project {
-            name 'Ktor-Firebase-Auth'
+            name 'Ktor-Firebase-Auth-Resolver'
             description 'KTOR Firebase authentication plugin'
             url 'https://github.com/alorma/KTOR_firebase_auth'
             inceptionYear '2019'
 
             packaging 'jar'
             groupId 'com.alorma.ktor'
-            artifactId 'firebase_auth'
-            version '0.0.9'
+            artifactId 'firebase_auth_resolver'
+            version '0.0.1'
 
             licenses {
                 license {
@@ -104,8 +104,8 @@ install {
                 }
             }
             scm {
-                connection 'https://github.com/alorma/KTOR_firebase_auth.git'
-                url 'https://github.com/alorma/KTOR_firebase_auth'
+                connection 'https://github.com/alorma/KTOR_firebase_auth_resolver.git'
+                url 'https://github.com/alorma/KTOR_firebase_auth_resolver'
 
             }
             developers {
