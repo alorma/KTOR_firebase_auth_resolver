@@ -82,7 +82,7 @@ private fun PipelineContext<AuthenticationContext, ApplicationCall>.authenticate
 }
 
 private fun authError() {
-    throw FirebaseAuthenticationException()
+    throw AuthorizationException()
 }
 
 class FirebaseAuthenticationProvider : AuthenticationProvider(null)
@@ -104,7 +104,7 @@ fun ApplicationRequest.bearerAuthenticationCredentials(): FirebaseCredential? =
                     val uId = verifyIdToken.uid
                     FirebaseCredential(uId)
                 } catch (e: FirebaseAuthException) {
-                    throw FirebaseAuthenticationException()
+                    throw AuthenticationException()
                 }
             }
         }
@@ -128,3 +128,6 @@ data class FirebasePrincipal(
 object Const {
     internal const val MAX_PRINCIPAL_TIMES = 10
 }
+
+class AuthenticationException : RuntimeException()
+class AuthorizationException : RuntimeException()
