@@ -20,7 +20,7 @@ fun Authentication.Configuration.firebase(
 
     provider.pipeline.intercept(AuthenticationPipeline.RequestAuthentication) { context ->
         val response = httpClient.get<AuthResponse> {
-            url(URL(authUrl))
+            url(URL(authUrl.plus("authenticate")))
             headers {
                 call.request.headers.flattenForEach { key, value ->
                     set(key, value)
@@ -39,7 +39,7 @@ fun Authentication.Configuration.firebase(
         context.principal(authPrincipal)
     }
 
-    register(provider )
+    register(provider)
 }
 
 data class AuthPrincipal(
