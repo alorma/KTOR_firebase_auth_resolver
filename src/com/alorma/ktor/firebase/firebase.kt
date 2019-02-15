@@ -1,6 +1,5 @@
 package com.alorma.ktor.firebase
 
-import com.alorma.ktor.firebase.model.AuthResponse
 import io.ktor.application.call
 import io.ktor.auth.Authentication
 import io.ktor.auth.AuthenticationPipeline
@@ -30,12 +29,32 @@ fun Authentication.Configuration.firebase(
             }
         }
 
-        val authPrincipal = AuthPrincipal(response.uId, response)
+        val authPrincipal = AuthPrincipal(
+            response.uId,
+            response.name,
+            response.email,
+            response.phone,
+            response.avatar,
+            response.disabled
+        )
         context.principal(authPrincipal)
     }
 }
 
-class AuthPrincipal(
+data class AuthPrincipal(
     val uId: String,
-    val authResponse: AuthResponse
+    val name: String?,
+    val email: String?,
+    val phone: String?,
+    val avatar: String?,
+    val disabled: Boolean = false
 ) : Principal
+
+data class AuthResponse(
+    val uId: String,
+    val name: String?,
+    val email: String?,
+    val phone: String?,
+    val avatar: String?,
+    val disabled: Boolean = false
+)
